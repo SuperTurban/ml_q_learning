@@ -20,6 +20,11 @@ import matplotlib.pyplot as plt
 #       b4x, b4y, b4xs, b4ys,
 #       b5x, b5y, b5xs, b5s ]
 
+#       Q function
+#       käigu reward + järgmise 30 käigu reward 
+#       
+#       vaja salvestada võtta memorist 30 state, minibactch koosneb id-dest
+
 def formStepResult(stepR):
     state = [stepR.player1.x, stepR.player1.y, stepR.player1.speed_x, stepR.player1.speed_y, stepR.player1.rotation,
     stepR.player2.x, stepR.player2.y, stepR.player2.speed_x, stepR.player2.speed_y, stepR.player2.rotation]
@@ -49,7 +54,7 @@ class Agent:
         self.epsilon_min = 0.01
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
-        self.gamma = 0.999
+        self.gamma = 0.99
         self.memory = deque(maxlen = 2000)
         self.model = self.build_model()
 
@@ -59,6 +64,7 @@ class Agent:
             return random.randrange(self.action_size)
         
         act_values = self.model.predict(state)
+        print(act_values)
         return np.argmax(act_values[0])
     
     def build_model(self):
@@ -70,9 +76,16 @@ class Agent:
         return model
 
     def replay(self, batchSize):
-        minibatch = random.sample(self.memory, batchSize)
-        for state,action,reward,next_state, done in minibatch:
+        minibatch = random.sample(range(len(self.memory)), batchSize)
+
+        # 30 järgmist käiku
+        # 30 liida rewardid kokku
+        # võta käik, mille reward on kõike suurem
+        # treeni mudelit seda käiku valima
+        for index in minibatch:
+            state,action,reward,next_state, done = self.memory[i]
             target = reward
+
             if not done:
                 target = reward + self.gamma * \
                          np.amax(self.model.predict(next_state)[0])
@@ -90,7 +103,7 @@ class Agent:
     def saveModel(self, name):
         self.model.save_weights(name)
 
-EPISODES = 4000
+EPISODES = 10
 agent = Agent()
 
 reward_t_history = []
@@ -128,16 +141,16 @@ for e in range(EPISODES):
     print("ep: {}, score: {}-{}, total reward : {}". format(e, game.player1Score, game.player2Score, t_reward))
     reward_t_history.append(t_reward);
 
-    if(e % 50 == 0):
+    if(e % 20 == 0):
         num = sum(reward_t_history)/len(reward_t_history)
         reward_history.append(num)
         reward_t_history=[]
         print(num)
 
     
-    if(e % 250 == 0 and e != 0):
-        agent.saveModel('model_after_' + str(e) + '.h5')
-
+    #if(e % 50 == 0 and e != 0):
+    #    agent.saveModel('model_after_' + str(e) + '.h5')
+    #
 
 plt.plot(reward_history)
 plt.show();

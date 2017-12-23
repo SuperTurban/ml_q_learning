@@ -11,7 +11,7 @@ INPUT_NO_ACTION     = 4
 
 HEIGHT = 800
 WIDTH = 1000
-GAME_SPEED = 0.5
+GAME_SPEED = 0.2
 
 
 class Player:
@@ -45,12 +45,12 @@ class Player:
         elif action==INPUT_TURN_RIGHT:
             self.rotation += self.ROTATION_STEP
         elif action == INPUT_ACCELERATE:
-            x_s = self.speed_x + math.cos(self.rotation)*1
-            y_s = self.speed_y + math.sin(self.rotation)*1
+            x_s = self.speed_x + math.cos(self.rotation)* (1 / GAME_SPEED)
+            y_s = self.speed_y + math.sin(self.rotation)* (1 / GAME_SPEED)
             self.setSpeed(x_s, y_s)
         elif action == INPUT_DECELERATE:
-            self.speed_x*=0.9/GAME_SPEED
-            self.speed_y*=0.9/GAME_SPEED
+            self.speed_x*=0.9
+            self.speed_y*=0.9
 
     def setSpeed(self, x_s, y_s):
         ns = math.sqrt(x_s**2 + y_s**2) 
@@ -285,13 +285,11 @@ class UI:
         
 ############ not game logic code ################
 
-
-''''
+'''
 game = Game(useUI = True, player1AI = False)
 while(game.state < 1):
     game.step(2)
-    '''
-
+'''
 
 
 
