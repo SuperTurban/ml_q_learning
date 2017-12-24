@@ -11,12 +11,12 @@ INPUT_NO_ACTION     = 4
 
 HEIGHT = 800
 WIDTH = 1000
-GAME_SPEED = 0.2
+GAME_SPEED = 0.1
 
 
 class Player:
 
-    ROTATION_STEP = math.pi/22.5 / GAME_SPEED
+    ROTATION_STEP = math.pi/45/ GAME_SPEED
     SPEED_MAX     = 4 / GAME_SPEED 
 
     def __init__(self,x,y):
